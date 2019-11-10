@@ -4,20 +4,26 @@ import utils
 import sys
 
 # Computes the largest magnitude eigenvalue of A via the power method, within
-# a tolerance of delta
-def power_method(A, delta=0.0001):
+# a tolerance of delta or for iterations iterations
+def power_method(A, delta=0.0001, iterations=None):
     utils.validate_matrix(A)
     x = np.zeros(A.shape[0])
     x[0] = 1.0
     pn = float("inf")
+    iteration = 0
+    data = []
     while True:
         p = A @ x
         n = np.max(np.abs(p))
+        data.append(n)
         x = (1.0 / n) * p
-        if abs(n - pn) < delta:
+
+        if (not iterations and abs(n - pn) < delta) or (iterations and iteration >= iterations):
             break
+
         pn = n
-    return (n, x)
+        iteration += 1
+    return (n, x, data)
 
 def jacobi_method(A, delta=0.0001):
     return (0, np.array())
@@ -48,7 +54,7 @@ def main(args):
     if args.jacobi:
         n, v = jacobi_method(A)
     else:
-        n, v = power_method(A)
+        n, v, _ = power_method(A)
 
     outfd.write(f"lambda = {repr(n)}\n")
     outfd.write(f"v = {repr(v.tolist())}\n")
