@@ -6,7 +6,6 @@ import sys
 # Computes the largest magnitude eigenvalue of A via the power method, within
 # a tolerance of delta or for iterations iterations
 def power_method(A):
-    utils.validate_matrix(A)
     x = np.zeros(A.shape[0])
     x[0] = 1.0
     while True:
@@ -17,6 +16,28 @@ def power_method(A):
 
 def jacobi_method(A):
     norm = utils.outer_norm(A)
+    while True:
+        i, j = utils.outer_argmax(A)
+        theta = 0.5 * (A[i, i] - A[j, j]) / A[i, j]
+        t = 1 / (np.abs(theta) + np.sqrt(1 + theta**theta))
+        c = 1 / np.sqrt(1 + t**t)
+        s = c * t
+        print(theta, t, c, s)
+        bi = np.zeros(A.shape[0])
+        bj = np.zeros(A.shape[0])
+        bi[i] = A[i, i] - t * A[i, j]
+        bj[j] = A[j, j] + t * A[i, j]
+        for l in range(A.shape[0]):
+            if l != i and l != j:
+                bi[l] = c * A[i, l] + s * A[j, l]
+                bj[l] = -s * A[i, l] + c * A[j, l]
+        print(bi, bj)
+        norm = norm - 2 * A[i, j]**2
+        print(norm)
+        for l in range(A.shape[0]):
+            A[i, l] = A[l, i] = bi[l]
+            A[j, l] = A[l, j] = bj[l]
+        yield norm
 
 def read_matrix(fd):
     x = [list(map(float, l.split())) for l in fd.readlines() if l.strip()]
@@ -24,13 +45,18 @@ def read_matrix(fd):
 
 def main(args):
     A = read_matrix(sys.stdin)
-    method = jacobi_method if args.jacobi else power_method
+    utils.validate_matrix(A)
     prev_eigenval = float("inf")
-    for eigenval in method(A):
-        if abs(eigenval - prev_eigenval) < 0.00001:
+    if args.jacobi:
+        for norm in jacobi_method(A):
+            print(norm, A)
             break
-        prev_eigenval = eigenval
-    print("{:0.4f}".format(eigenval))
+    else:
+        for eigenval in power_method(A):
+            if abs(eigenval - prev_eigenval) < 0.00001:
+                break
+            prev_eigenval = eigenval
+        print("{:0.4f}".format(eigenval))
 
 if __name__ == "__main__":
     import argparse

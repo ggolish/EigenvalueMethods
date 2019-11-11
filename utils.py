@@ -5,9 +5,16 @@ import numpy as np
 # Computes the outer norm of a matrix A, the sum of the squares of the 
 # nondiagonal entries
 def outer_norm(A):
-    lt = np.tril_indices(2, -1)
-    ut = np.triu_indices(2, 1)
+    lt = np.tril_indices(A.shape[0], -1)
+    ut = np.triu_indices(A.shape[0], 1)
     return np.sum(np.square(A[lt])) + np.sum(np.square(A[ut]))
+
+# Returns the index of the largest entry of A, not including 
+# diagonal entries
+def outer_argmax(A):
+    B = np.abs(A.copy())
+    B[np.diag_indices(B.shape[0])] = 0
+    return np.unravel_index(B.argmax(), B.shape)
 
 # Ensures A is a valid 2D matrix, and optionally square / symmetric
 def validate_matrix(A, square=True, symmetric=True):
