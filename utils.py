@@ -2,6 +2,13 @@
 import sys
 import numpy as np
 
+# Computes the outer norm of a matrix A, the sum of the squares of the 
+# nondiagonal entries
+def outer_norm(A):
+    lt = np.tril_indices(2, -1)
+    ut = np.triu_indices(2, 1)
+    return np.sum(np.square(A[lt])) + np.sum(np.square(A[ut]))
+
 # Ensures A is a valid 2D matrix, and optionally square / symmetric
 def validate_matrix(A, square=True, symmetric=True):
     if len(A.shape) != 2:

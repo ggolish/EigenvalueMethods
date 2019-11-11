@@ -15,8 +15,8 @@ def power_method(A):
         x = (1.0 / n) * p
         yield n
 
-def jacobi_method(A, delta=0.0001):
-    return (0, np.array())
+def jacobi_method(A):
+    norm = utils.outer_norm(A)
 
 def read_matrix(fd):
     x = [list(map(float, l.split())) for l in fd.readlines() if l.strip()]
