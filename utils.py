@@ -16,6 +16,13 @@ def outer_argmax(A):
     B[np.diag_indices(B.shape[0])] = 0
     return np.unravel_index(B.argmax(), B.shape)
 
+# Modified version of the mathematical sign operation used by
+# the Jacobi method
+def sign(x):
+    if x < 0:
+        return -1
+    return 1
+
 # Ensures A is a valid 2D matrix, and optionally square / symmetric
 def validate_matrix(A, square=True, symmetric=True):
     if len(A.shape) != 2:
