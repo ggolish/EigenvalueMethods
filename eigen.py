@@ -18,25 +18,27 @@ def power_method(A):
 # Computes all eigenvalues of a symmetric matrix A via the Jacobi method
 def jacobi_method(A):
     norm = utils.outer_norm(A)
+    yield norm
     while True:
         i, j = utils.outer_argmax(A)
-        theta = 0.5 * (A[i, i] - A[j, j]) / A[i, j]
-        t = utils.sign(theta) / (abs(theta) + math.sqrt(1 + theta**2))
-        c = 1 / math.sqrt(1 + t**2)
-        s = c * t
-        bi = np.zeros(A.shape[0])
-        bj = np.zeros(A.shape[0])
-        bi[i] = A[i, i] - t * A[i, j]
-        bj[j] = A[j, j] + t * A[i, j]
-        for l in range(A.shape[0]):
-            if l != i and l != j:
-                bi[l] = c * A[i, l] + s * A[j, l]
-                bj[l] = -s * A[i, l] + c * A[j, l]
-        norm = norm - 2 * A[i, j]**2
-        for l in range(A.shape[0]):
-            A[i, l] = A[l, i] = bi[l]
-            A[j, l] = A[l, j] = bj[l]
-        yield norm
+        if i != 0 or j != 0:
+            a = A.copy()
+            theta = 0.5 * (A[i, i] - A[j, j]) / A[i, j]
+            t = utils.sign(theta) / (abs(theta) + math.sqrt(theta**2 + 1))
+            c = 1 / math.sqrt(t**2 + 1)
+            s = c * t
+            a[i, j] = a[j, i] = 0
+            a[i, i] = A[i, i] - t * A[i, j]
+            a[j, j] = A[j, j] + t * A[i, j]
+            for l in range(A.shape[0]):
+                if l != i and l != j:
+                    a[i, l] = a[l, i] = c * A[i, l] + s * A[j, l]
+                    a[j, l] = a[l, j] = c * A[j, l] - s * A[i, l]
+            norm -= 2 * A[i, j]**2
+            A[:] = a
+            yield norm
+        else:
+            yield 0
 
 def read_matrix(fd):
     x = [list(map(float, l.split())) for l in fd.readlines() if l.strip()]
@@ -48,7 +50,7 @@ def main(args):
     prev_eigenval = float("inf")
     if args.jacobi:
         for norm in jacobi_method(A):
-            if norm <= 0.0001:
+            if norm == 0:
                 break
         for eigenval in np.diag(A):
             print("{:0.4f}".format(eigenval))
