@@ -21,7 +21,9 @@ def outer_argmax(A):
 def sign(x):
     if x < 0:
         return -1
-    return 1
+    elif x > 0:
+        return  1
+    return 0
 
 # Ensures A is a valid 2D matrix, and optionally square / symmetric
 def validate_matrix(A, square=True, symmetric=True):
