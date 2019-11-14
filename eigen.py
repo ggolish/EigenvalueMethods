@@ -50,7 +50,7 @@ def main(args):
     prev_eigenval = float("inf")
     if args.jacobi:
         for norm in jacobi_method(A):
-            if norm == 0:
+            if norm < 0.0001:
                 break
         for eigenval in np.diag(A):
             print("{:0.4f}".format(eigenval))
