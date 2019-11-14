@@ -1,0 +1,4 @@
+* Comparison of Numerical Eigenvalue Approximation Methods
+** Power Method
+** Jacobi Method
+** Usage
