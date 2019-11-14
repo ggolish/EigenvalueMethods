@@ -28,8 +28,8 @@ def jacobi_method(A):
             c = 1 / math.sqrt(t**2 + 1)
             s = c * t
             a[i, j] = a[j, i] = 0
-            a[i, i] = A[i, i] - t * A[i, j]
-            a[j, j] = A[j, j] + t * A[i, j]
+            a[i, i] = A[i, i] + t * A[i, j]
+            a[j, j] = A[j, j] - t * A[i, j]
             for l in range(A.shape[0]):
                 if l != i and l != j:
                     a[i, l] = a[l, i] = c * A[i, l] + s * A[j, l]
