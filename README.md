@@ -13,7 +13,7 @@ eigenvector. Each iterative step takes O(N<sup>2</sup>) time.
 ## Jacobi Method
 
 The Jacobi method is an iterative method that can be used to find
-all eigenvalues and corresponding eigenvecotrs of a Hermitian
+all eigenvalues and corresponding eigenvectors of a Hermitian
 matrix. It is based on the fact that orthogonal transformations
 on such a matrix do not change its eigenvalues, and hence these
 transformations can be iteratvely made in order to transform the
@@ -38,12 +38,13 @@ individual matrix read from standard input.
     -   &#x2013;jacobi => use the Jacobi method (power method is the default)
 -   `tests.py`:
     
-        python3 tests.py [-t <threshold>] [-g] [-h] <test-number>
+        python3 tests.py [-t <threshold>] [-g] [-h] [-e] <test-number>
     
     -   -h => print usage information
     -   -t <threshold> => the threshold for convergence of both
         algorithms (default 0.0001)
     -   -g => generate a new test case and print to stdout
+    -   -e => print the test case in latex format
     -   test-number => the number of the test case in the data
         directory
 
