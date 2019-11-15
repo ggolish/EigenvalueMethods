@@ -15,7 +15,7 @@ def write_test(number, A):
     with open(path, "w") as fd:
         for i in range(A.shape[0]):
             for j in range(A.shape[1]):
-                fd.write("{:0.4f}\t".format(A[i, j]))
+                fd.write("{:0.2f}\t".format(A[i, j]))
             fd.write("\n")
 
 def plot_testcase(number, power_data, jacobi_data):
@@ -44,10 +44,13 @@ def run_power(A, threshold=0.0001):
 
 def run_jacobi(A, threshold=0.0001):
     data = []
+    prev = float("inf")
     for norm in eigen.jacobi_method(A):
         data.append(norm)
-        if norm < threshold:
+        eigenval = max(np.abs(np.diag(A)))
+        if abs(eigenval - prev) < threshold:
             break
+        prev = eigenval
     return data
 
 def main(args):
@@ -60,6 +63,17 @@ def generate_testcase(number):
     A = np.random.rand(10, 10) * 10
     A += A.T
     write_test(number, A)
+
+def export_latex(A):
+    print("\\begin{bmatrix}")
+    for i in range(A.shape[0]):
+        for j in range(A.shape[1]):
+            print(round(A[i, j], 2), end=" ")
+            if j != A.shape[1] - 1:
+                print("& ", end="")
+            else:
+                print("\\\\")
+    print("\\end{bmatrix}")
 
 if __name__ == "__main__":
     import argparse
@@ -76,11 +90,16 @@ if __name__ == "__main__":
             help="The threshold value for both Jacobi and power method")
     parser.add_argument("-g", "--generate", action="store_true",
             help="Generate a new test case.")
+    parser.add_argument("-e", "--export-latex", action="store_true",
+            help="Print the test case in tex format.")
 
     args = parser.parse_args(sys.argv[1:])
 
     if args.generate:
         generate_testcase(args.number)
+    elif args.export_latex:
+        A = load_test(args.number)
+        export_latex(A)
     else:
         main(args)
 
